@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -46,27 +47,32 @@ public class Main {
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(json);
         fileWriter.close();
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder1 = factory.newDocumentBuilder();
-        Document doc = builder1.parse(new File("C:/Users/HP/Desktop/Java/CSV,XML,JSON","data.json"));
-
-        Node root = doc.getDocumentElement();
-        NodeList nodeList = root.getChildNodes();
-        for(int i =0; i< nodeList.getLength(); i++){
-            Node node_ = nodeList.item(i);
-            if(Node.ELEMENT_NODE == node_.getNodeType()){
-                Element element = (Element) node_;
-                NamedNodeMap map = element.getAttributes();
-                for(int a =0; a< map.getLength();a++){
-
-                }
-            }
-        }
-
-
+        List<Employee> listEmployes = parseXML();
 
     }
 
+    public static List<Employee> parseXML()throws ParserConfigurationException,IOException,SAXException {
 
-}
+        List<Employee> list = new ArrayList<>();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder1 = factory.newDocumentBuilder();
+        Document doc = builder1.parse(new File("C:/Users/HP/Desktop/Java/CSV,XML,JSON", "data.json"));
+
+        Node root = doc.getDocumentElement();
+        NodeList nodeList = root.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node_ = nodeList.item(i);
+            if (Node.ELEMENT_NODE == node_.getNodeType()) {
+                Element element = (Element) node_;
+                list.add(new Employee(
+                        Long.parseLong(element.getElementsByTagName("id").item(0).getTextContent()),
+                        element.getElementsByTagName("firstName").item(0).getTextContent(),
+                        element.getElementsByTagName("lastName").item(0).getTextContent(),
+                        element.getElementsByTagName("country").item(0).getTextContent(),
+                        Integer.parseInt(element.getElementsByTagName("age").item(0).getTextContent())
+                ));
+            }
+        }
+        return list;
+    }
+    }
